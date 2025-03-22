@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ujaagar - Resource Allocation</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --main-bg: #1a1d21;
+            --secondary-bg: #252a30;
+            --shadow-light: #2c3138;
+            --shadow-dark: #12151a;
+            --primary: #6d72fe;
+            --primary-light: #8f93ff;
+            --primary-dark: #4e52e3;
+            --white: #ffffff;
+            --text: #e0e0e0;
+            --text-light: #a0a0a0;
+            --danger: #ff4d6d;
+            --warning: #ffb01f;
+            --success: #4ecca3;
+            --card-bg: #212529;
+            --hover-bg: #2a2f35;
+        }
+        
+        body {
+            background-color: var(--main-bg);
+            color: var(--text);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .neo-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 8px 8px 16px var(--shadow-dark), 
+                        -8px -8px 16px var(--shadow-light);
+            transition: all 0.3s ease;
+        }
+        
+        .neo-card:hover {
+            box-shadow: 10px 10px 20px var(--shadow-dark), 
+                        -10px -10px 20px var(--shadow-light);
+            background: var(--hover-bg);
+        }
+        
+        .neo-inset {
+            background: var(--secondary-bg);
+            border-radius: 16px;
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), 
+                        inset -5px -5px 10px var(--shadow-light);
+        }
+        
+        .neo-button {
+            border-radius: 12px;
+            background: var(--card-bg);
+            box-shadow: 5px 5px 10px var(--shadow-dark), 
+                        -5px -5px 10px var(--shadow-light);
+            transition: all 0.2s ease;
+            border: none;
+            color: var(--text);
+        }
+        
+        .neo-button:hover {
+            box-shadow: 6px 6px 12px var(--shadow-dark), 
+                        -6px -6px 12px var(--shadow-light);
+            background: var(--hover-bg);
+        }
+        
+        .neo-button:active {
+            box-shadow: inset 5px 5px 10px var(--shadow-dark), 
+                        inset -5px -5px 10px var(--shadow-light);
+        }
+        
+        .status-available { color: #4ecca3; }
+        .status-demand { color: #ff4d6d; }
+        .badge { padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+        .badge-population { background-color: #374151; }
+        
+        .nav-item.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .text-primary {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-6 lg:p-8">
+    <div class="grid grid-cols-12 gap-6">
+        <!-- Sidebar -->
+        <div class="col-span-12 md:col-span-3 lg:col-span-2">
+            <div class="neo-card p-6 flex flex-col h-full">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-primary mb-1">UJAAGAR</h1>
+                    <div class="text-sm text-gray-500">Disaster Management</div>
+                </div>
+                
+                <nav class="space-y-4 flex-grow">
+                    <a href="index.html" class="flex items-center p-3 neo-button nav-item">
+                        <i class="bi bi-grid-1x2-fill mr-3"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="maps.html" class="flex items-center p-3 neo-button nav-item">
+                        <i class="bi bi-geo-alt-fill mr-3"></i>
+                        <span>Map View</span>
+                    </a>
+                    <a href="alerts.html" class="flex items-center p-3 neo-button nav-item">
+                        <i class="bi bi-bell-fill mr-3"></i>
+                        <span>Alerts</span>
+                    </a>
+                    <a href="resources.html" class="flex items-center p-3 neo-button active nav-item">
+                        <i class="bi bi-people-fill mr-3"></i>
+                        <span>Resources</span>
+                    </a>
+                    <a href="#" class="flex items-center p-3 neo-button nav-item">
+                        <i class="bi bi-graph-up mr-3"></i>
+                        <span>Analytics</span>
+                    </a>
+                </nav>
+                
+                <div class="mt-auto pt-6">
+                    <a href="#" class="flex items-center p-3 neo-button nav-item">
+                        <i class="bi bi-gear-fill mr-3"></i>
+                        <span>Settings</span>
+                    </a>
+                    <a href="#" class="flex items-center p-3 neo-button nav-item mt-2">
+                        <i class="bi bi-question-circle-fill mr-3"></i>
+                        <span>Help</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="col-span-12 md:col-span-9 lg:col-span-10">
+            <!-- Header -->
+            <div class="neo-card p-6 mb-6 flex justify-between items-center">
+                <h2 class="text-2xl font-semibold">Resource Allocation</h2>
+                <div class="flex items-center">
+                    <div class="neo-inset p-2 px-4 mr-4 rounded-full flex items-center">
+                        <i class="bi bi-search mr-2"></i>
+                        <input type="text" placeholder="Search..." class="bg-transparent border-none outline-none w-40" />
+                    </div>
+                    <div class="neo-button p-3 rounded-full">
+                        <i class="bi bi-bell"></i>
+                    </div>
+                    <div class="neo-button p-3 rounded-full ml-3">
+                        <i class="bi bi-person"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="neo-card p-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-semibold">Resource Allocation</h2>
+                    <button class="neo-button py-2 px-4 text-sm" id="refresh-btn">
+                        <i class="bi bi-arrow-clockwise mr-2"></i>Refresh Data
+                    </button>
+                </div>
+                <div class="border-b border-gray-700 pb-4 mb-4">
+                    <p class="text-gray-400">
+                        Monitor disaster relief resources across regions. Available resources are calculated from the database, while demand is estimated based on population demographics using our ML model.
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-4">
+                    <div class="flex items-center">
+                        <span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
+                        <span class="text-sm">Available</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
+                        <span class="text-sm">Demand (Calculated by ML Model)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resource Demand Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6" id="resource-cards">
+                <!-- Loading indicator -->
+                <div class="neo-card p-6 flex items-center justify-center col-span-full h-64">
+                    <div class="text-center">
+                        <i class="bi bi-arrow-repeat animate-spin text-4xl mb-4"></i>
+                        <p>Loading resource data...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", async function() {
+        const API_BASE_URL = "http://localhost:8000/api";
+        
+        // Initial loading state
+        document.getElementById("resource-cards").innerHTML = `
+            <div class="neo-card p-6 flex items-center justify-center col-span-full h-64">
+                <div class="text-center">
+                    <i class="bi bi-arrow-repeat animate-spin text-4xl mb-4"></i>
+                    <p>Loading resource data...</p>
+                </div>
+            </div>
+        `;
+        
+        try {
+            // Fetch resource demands from the API
+            const response = await fetch(`${API_BASE_URL}/resource-demands`);
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
+            }
+            const data = await response.json();
+            renderResourceCards(data);
+        } catch (error) {
+            console.error("Error fetching resource demands:", error);
+            document.getElementById("resource-cards").innerHTML = `
+                <div class="neo-card p-6 flex items-center justify-center col-span-full">
+                    <div class="text-center text-red-500">
+                        <i class="bi bi-exclamation-circle text-4xl mb-4"></i>
+                        <p>Failed to load demand data: ${error.message}</p>
+                        <button class="neo-button mt-4 py-2 px-4" onclick="location.reload()">Try Again</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Add refresh button functionality
+        document.getElementById("refresh-btn").addEventListener("click", async function() {
+            this.innerHTML = '<i class="bi bi-arrow-clockwise animate-spin mr-2"></i>Refreshing...';
+            try {
+                const response = await fetch(`${API_BASE_URL}/resource-demands`);
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+                const data = await response.json();
+                renderResourceCards(data);
+            } catch (error) {
+                console.error("Error refreshing data:", error);
+                alert(`Failed to refresh data: ${error.message}`);
+            } finally {
+                this.innerHTML = '<i class="bi bi-arrow-clockwise mr-2"></i>Refresh Data';
+            }
+        });
+    });
+
+    function renderResourceCards(data) {
+        const container = document.getElementById("resource-cards");
+        container.innerHTML = "";
+        
+        if (data.length === 0) {
+            container.innerHTML = `
+                <div class="neo-card p-6 flex items-center justify-center col-span-full">
+                    <div class="text-center">
+                        <i class="bi bi-info-circle text-4xl mb-4"></i>
+                        <p>No resource data available.</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        data.forEach(district => {
+            const card = document.createElement("div");
+            card.className = "neo-card p-6";
+            
+            // Create a sufficiency indicator function
+            const getSufficiencyIndicator = (available, demand) => {
+                if (!demand) return "";
+                const ratio = available / parseInt(demand);
+                if (ratio >= 1) return '<span class="ml-2 text-green-500"><i class="bi bi-check-circle-fill"></i></span>';
+                if (ratio >= 0.5) return '<span class="ml-2 text-yellow-500"><i class="bi bi-exclamation-triangle-fill"></i></span>';
+                return '<span class="ml-2 text-red-500"><i class="bi bi-x-circle-fill"></i></span>';
+            };
+            
+            card.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">${district.district_name}, ${district.state_name}</h3>
+                    <span class="badge badge-population">${(district.population).toLocaleString()} people</span>
+                </div>
+                <p class="text-sm text-gray-400 mb-4">${district.camp_name || "No relief camp"}</p>
+                
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <div class="text-gray-400 mb-1 text-xs">Gender Distribution</div>
+                        <div class="text-sm">Male: ${Math.round(district.male/district.population*100)}%</div>
+                        <div class="text-sm">Female: ${Math.round(district.female/district.population*100)}%</div>
+                    </div>
+                    <div>
+                        <div class="text-gray-400 mb-1 text-xs">Coordinates</div>
+                        <div class="text-sm">${district.disaster_latitude.toFixed(4)}, ${district.disaster_longitude.toFixed(4)}</div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-700 my-4 pt-4">
+                    <h4 class="font-medium mb-3">Resource Status</h4>
+                    
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm">Food</span>
+                            <span class="text-sm">${getSufficiencyIndicator(district.food_available, district.food_demand)}</span>
+                        </div>
+                        <div class="flex items-center justify-between mb-1 text-sm">
+                            <span class="status-available">Available: ${district.food_available.toLocaleString()} units</span>
+                            <span class="status-demand">Demand: ${district.food_demand.toLocaleString()} units</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm">Medical</span>
+                            <span class="text-sm">${getSufficiencyIndicator(district.medical_available, district.medical_demand)}</span>
+                        </div>
+                        <div class="flex items-center justify-between mb-1 text-sm">
+                            <span class="status-available">Available: ${district.medical_available.toLocaleString()} units</span>
+                            <span class="status-demand">Demand: ${district.medical_demand.toLocaleString()} units</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm">Shelter</span>
+                            <span class="text-sm">${getSufficiencyIndicator(district.shelter_available, district.shelter_demand)}</span>
+                        </div>
+                        <div class="flex items-center justify-between mb-1 text-sm">
+                            <span class="status-available">Available: ${district.shelter_available.toLocaleString()} units</span>
+                            <span class="status-demand">Demand: ${district.shelter_demand.toLocaleString()} units</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end mt-4">
+                    <button class="neo-button py-2 px-4 text-sm" onclick="viewAllocationDetails('${district.district_name}')">
+                        View Allocation <i class="bi bi-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    async function viewAllocationDetails(districtName) {
+        try {
+            const response = await fetch(`http://localhost:8000/api/allocate-resources/${encodeURIComponent(districtName)}`);
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
+            }
+            const data = await response.json();
+            
+            // In a real app, you'd display this in a modal or navigate to a details page
+            alert(`Allocation details for ${districtName}:\n\nDemands: \n- Food: ${data.demands.food_demand}\n- Medical: ${data.demands.medical_demand}\n- Shelter: ${data.demands.shelter_demand}\n\nVehicles Allocated: ${data.allocations.length}\n\nView console for complete details.`);
+            
+            console.log("Allocation details:", data);
+        } catch (error) {
+            console.error("Error fetching allocation details:", error);
+            alert(`Failed to fetch allocation details: ${error.message}`);
+        }
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+camp_id,camp_name,district_name,state_name,latitude,longitude,food_available,shelter_available,medical_available,contact_number,speed_kph,capacity_kg,vehicle_id,disaster_latitude,disaster_longitude,food_demand,shelter_demand,medical_demand
+NGO001,Helping Hands Delhi,Delhi,Delhi,28.6139,77.209,8000,500,3000,+91-9876543210,60,50000,VH001,20,80,5000,400,1200
+NGO002,Hope Camp Srinagar,Srinagar,Jammu & Kashmir,34.0837,74.7973,5000,300,2500,+91-9876543211,150,15000,VH002,20,80,5000,400,1200
+NGO003,Relief Base Sonprayag,Sonprayag,Uttarakhand,30.615,79.0555,10000,600,5000,+91-9876543212,70,40000,VH003,20,80,5000,400,1200
+NGO004,Aid Madhubani,Madhubani,Bihar,26.3661,86.0712,9000,400,4000,+91-9876543213,55,30000,VH004,20,80,5000,400,1200
+NGO005,Bhuj Relief Shelter,Bhuj,Gujarat,23.2514,69.6689,4000,200,1500,+91-9876543214,65,10000,VH005,20,80,5000,400,1200
+NGO006,Anadaman Rescuers,Anadaman,Andaman & Nicobar,11.7401,92.6586,3500,150,1200,+91-9876543215,60,8000,VH006,20,80,5000,400,1200
+NGO007,Kargil Support Camp,Kargil (Ladakh),Ladakh,34.5553,76.1349,3500,150,1200,+91-9876543216,120,12000,VH007,20,80,5000,400,1200
+NGO008,Morigaon Lifesavers,Morigaon (Assam),Assam,26.2497,92.3475,10000,700,5000,+91-9876543217,75,45000,VH008,20,80,5000,400,1200
